@@ -7,14 +7,15 @@ Cpewindow::Cpewindow(rest *acs_rest, QWidget *parent) :
 {
     ui->setupUi(this);
     this->mrest=acs_rest;
+    this->deviceID=this->mrest->selected;
 
-    QString task= "devices/"+this->mrest->selected+"/tasks?timeout=3000&connection_request";
+    QString task= "devices/"+this->deviceID+"/tasks?timeout=3000&connection_request";
 
     std::string data="{\"name\":\"refreshObject\",\"objectName\":\"InternetGatewayDevice\"}";
 
     this->mrest->PostData(task, data);
 
-    task="devices/?query=%7B%22_id%22%3A%22"+this->mrest->selected+"%22%7D";
+    task="devices/?query=%7B%22_id%22%3A%22"+this->deviceID+"%22%7D";
     QString cpe=this->mrest->GetData(task);
 
     QJsonParseError jsonError;
@@ -41,7 +42,8 @@ Cpewindow::~Cpewindow()
 
 void Cpewindow::sendSSID()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    qDebug() << this->deviceID;
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID\", \""+this->ssidLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
@@ -49,7 +51,7 @@ void Cpewindow::sendSSID()
 
 void Cpewindow::sendSSIDPas()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TP_PreSharedKey\", \""+this->ssidPasLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
@@ -57,7 +59,7 @@ void Cpewindow::sendSSIDPas()
 
 void Cpewindow::sendSSIDB()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.SSID\", \""+this->ssidBLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
@@ -65,7 +67,7 @@ void Cpewindow::sendSSIDB()
 
 void Cpewindow::sendSSIDBPas()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.X_TP_PreSharedKey\", \""+this->ssidBPasLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
@@ -73,7 +75,7 @@ void Cpewindow::sendSSIDBPas()
 
 void Cpewindow::sendPPPPoeL()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Username\", \""+this->pppoeLLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
@@ -81,7 +83,7 @@ void Cpewindow::sendPPPPoeL()
 
 void Cpewindow::sendPPPPoePas()
 {
-    QString task="devices/"+this->mrest->selected+"/tasks?connection_request";
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Password\", \""+this->pppoePLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
