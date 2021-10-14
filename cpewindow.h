@@ -29,7 +29,8 @@ public:
     void displayIGD(QJsonObject item);
     QString id;
     rest *mrest;
-
+    QString deviceID;
+    
     QLineEdit *ssidLine = new QLineEdit();
     QLineEdit *ssidPasLine = new QLineEdit();
 
