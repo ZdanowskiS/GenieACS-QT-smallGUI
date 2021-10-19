@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = GenieACS-Qt-smallGUI
+TARGET = GenieACS-QT-smallGUI
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -29,12 +29,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     rest.cpp \
-    cpewindow.cpp
+    cpewindow.cpp \
+    cpeigd.cpp
 
 HEADERS += \
         mainwindow.h \
     rest.h \
-    cpewindow.h
+    cpewindow.h \
+    cpe.h \
+    cpeigd.h
 
 FORMS += \
         mainwindow.ui \
