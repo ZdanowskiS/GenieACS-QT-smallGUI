@@ -13,7 +13,11 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include <QDebug>
+
 #include "rest.h"
+#include "cpeigd.h"
+
 namespace Ui {
 class Cpewindow;
 }
@@ -26,27 +30,31 @@ public:
     explicit Cpewindow(rest *acs_rest, QWidget *parent = nullptr);
     ~Cpewindow();
 
-    void displayIGD(QJsonObject item);
+    void displayCPE(QJsonObject item);
     QString id;
     rest *mrest;
+    Cpe *windowCPE;
+
     QString deviceID;
-    
-    QLineEdit *ssidLine = new QLineEdit();
-    QLineEdit *ssidPasLine = new QLineEdit();
 
-    QLineEdit *ssidBLine = new QLineEdit();
-    QLineEdit *ssidBPasLine = new QLineEdit();
+    bool setPointer(QString productclass);
 
-    QLineEdit *pppoeLLine = new QLineEdit();
+    QLineEdit *ssid24Line = new QLineEdit();
+    QLineEdit *ssid24PassLine = new QLineEdit();
+
+    QLineEdit *ssid5Line = new QLineEdit();
+    QLineEdit *ssid5PasLine = new QLineEdit();
+
+    QLineEdit *pppoeLoginLine = new QLineEdit();
     QLineEdit *pppoePLine = new QLineEdit();
 
 private slots:
-    void sendSSID();
-    void sendSSIDPas();
-    void sendSSIDB();
-    void sendSSIDBPas();
+    void sendSSID24();
+    void sendSSID24Pass();
+    void sendSSID5();
+    void sendSSID5Pas();
 
-    void sendPPPPoeL();
+    void sendPPPPoELogin();
     void sendPPPPoePas();
 
 private:

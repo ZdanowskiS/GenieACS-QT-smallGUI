@@ -1,6 +1,8 @@
 #include "cpewindow.h"
 #include "ui_cpewindow.h"
 
+#include "cpeigd.h"
+
 Cpewindow::Cpewindow(rest *acs_rest, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Cpewindow)
@@ -28,8 +30,9 @@ Cpewindow::Cpewindow(rest *acs_rest, QWidget *parent) :
             ui->lineEdit_serial->setText(item.toObject().value("_deviceId").toObject().value("_SerialNumber").toString());
             ui->lineEdit_softversion->setText(item.toObject().value("InternetGatewayDevice").toObject().value("DeviceInfo").toObject().value("SoftwareVersion").toObject().value("_value").toString());
 
-            if(item.toObject().value("_deviceId").toObject().value("_ProductClass").toString()=="IGD"){
-                this->displayIGD(item.toObject());
+            if(this->setPointer(item.toObject().value("_deviceId").toObject().value("_ProductClass").toString()))
+            {
+                this->displayCPE(item.toObject());
             }
         }
     }
@@ -40,43 +43,53 @@ Cpewindow::~Cpewindow()
     delete ui;
 }
 
-void Cpewindow::sendSSID()
+bool Cpewindow::setPointer(QString productclass){
+    if(productclass=="IGD")
+    {
+        this->windowCPE= new CpeIGD();
+        return true;
+    }
+
+    return false;
+}
+
+void Cpewindow::sendSSID24()
 {
-    qDebug() << this->deviceID;
+
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID\", \""+this->ssidLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24().toStdString()+"\", \""+this->ssid24Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
 
-void Cpewindow::sendSSIDPas()
+void Cpewindow::sendSSID24Pass()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TP_PreSharedKey\", \""+this->ssidPasLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24Pass().toStdString()+"\", \""+this->ssid24PassLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
 
-void Cpewindow::sendSSIDB()
+void Cpewindow::sendSSID5()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.SSID\", \""+this->ssidBLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5().toStdString()+"\", \""+this->ssid5Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
 
-void Cpewindow::sendSSIDBPas()
+void Cpewindow::sendSSID5Pas()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.X_TP_PreSharedKey\", \""+this->ssidBPasLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5Pass().toStdString()+"\", \""+this->ssid5PasLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
 
-void Cpewindow::sendPPPPoeL()
+void Cpewindow::sendPPPPoELogin()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Username\", \""+this->pppoeLLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoELogin().toStdString()+"\", \""+this->pppoeLoginLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
@@ -84,139 +97,160 @@ void Cpewindow::sendPPPPoeL()
 void Cpewindow::sendPPPPoePas()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\"InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Password\", \""+this->pppoePLine->text().toStdString()+"\", \"xsd:string\"]]}";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEPass().toStdString()+"\", \""+this->pppoePLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
 }
 
-void Cpewindow::displayIGD(QJsonObject item)
+void Cpewindow::displayCPE(QJsonObject item)
 {
-    const short int labelWidth = 70;
+    const short int labelWidth = 85;
+    QWidget* techAreaV = new QWidget;
+    techAreaV->setLayout(new QVBoxLayout(techAreaV));
     /**/
-    QLabel *ssidLabel = new QLabel();
-    ssidLabel->setText("SSID 1");
-    ssidLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodeSSID24()!="")
+    {
+        QLabel *ssid24Label = new QLabel();
+        ssid24Label->setText("SSID 2.4GHz");
+        ssid24Label->setMinimumWidth(labelWidth);
 
-    this->ssidLine->setText(item.value("InternetGatewayDevice").toObject().value("LANDevice").toObject().value("1").toObject().value("WLANConfiguration").toObject().value("1").toObject().value("SSID").toObject().value("_value").toString());
-    ssidLine->setMinimumWidth(100);
+        this->ssid24Line->setText(this->windowCPE->getSSID24(item));
 
-    QPushButton *ssidButton = new QPushButton();
-    ssidButton->setText("Save");
-    connect(ssidButton, SIGNAL(clicked()),this, SLOT(sendSSID()));
+        ssid24Line->setMinimumWidth(100);
 
-    QWidget* ssidArea = new QWidget;
-    ssidArea->setLayout(new QHBoxLayout(ssidArea));
+        QPushButton *ssid24Button = new QPushButton();
+        ssid24Button->setText("Save");
 
-    ssidArea->layout()->setMargin(0);
-    ssidArea->layout()->setSpacing(0);
+        connect(ssid24Button, SIGNAL(clicked()),this, SLOT(sendSSID24()));
 
-    ssidArea->layout()->addWidget(ssidLabel);
-    ssidArea->layout()->addWidget(this->ssidLine);
-    ssidArea->layout()->addWidget(ssidButton);
+        QWidget* ssid24Area = new QWidget;
+        ssid24Area->setLayout(new QHBoxLayout(ssid24Area));
+
+        ssid24Area->layout()->setMargin(0);
+        ssid24Area->layout()->setSpacing(0);
+
+        ssid24Area->layout()->addWidget(ssid24Label);
+        ssid24Area->layout()->addWidget(this->ssid24Line);
+        ssid24Area->layout()->addWidget(ssid24Button);
+
+        techAreaV->layout()->addWidget(ssid24Area);
+    }
     /**/
-    QLabel *ssidPasLabel = new QLabel();
-    ssidPasLabel->setText("Pass");
-    ssidPasLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodeSSID24Pass()!="")
+    {
+        QLabel *ssid24PassLabel = new QLabel();
+        ssid24PassLabel->setText("2.4GHz Pass");
+        ssid24PassLabel->setMinimumWidth(labelWidth);
 
-    this->ssidPasLine->setText(item.value("InternetGatewayDevice").toObject().value("LANDevice").toObject().value("1").toObject().value("WLANConfiguration").toObject().value("1").toObject().value("X_TP_PreSharedKey").toObject().value("_value").toString());
-    QPushButton *ssidPasButton = new QPushButton();
-    ssidPasButton->setText("Save");
-    connect(ssidPasButton, SIGNAL(clicked()),this, SLOT(sendSSIDPas()));
+        this->ssid24PassLine->setText(this->windowCPE->getSSID24Pass(item));
+        QPushButton *ssid24PassButton = new QPushButton();
+        ssid24PassButton->setText("Save");
+        connect(ssid24PassButton, SIGNAL(clicked()),this, SLOT(sendSSID24Pass()));
 
-    QWidget* ssidPasArea = new QWidget;
-    ssidPasArea->setLayout(new QHBoxLayout(ssidPasArea));
+        QWidget* ssid24PassArea = new QWidget;
+        ssid24PassArea->setLayout(new QHBoxLayout(ssid24PassArea));
 
-    ssidPasArea->layout()->setMargin(0);
-    ssidPasArea->layout()->setSpacing(0);
+        ssid24PassArea->layout()->setMargin(0);
+        ssid24PassArea->layout()->setSpacing(0);
 
-    ssidPasArea->layout()->addWidget(ssidPasLabel);
-    ssidPasArea->layout()->addWidget(this->ssidPasLine);
-    ssidPasArea->layout()->addWidget(ssidPasButton);
+        ssid24PassArea->layout()->addWidget(ssid24PassLabel);
+        ssid24PassArea->layout()->addWidget(this->ssid24PassLine);
+        ssid24PassArea->layout()->addWidget(ssid24PassButton);
+
+        techAreaV->layout()->addWidget(ssid24PassArea);
+    }
     /**/
-    QLabel *ssidBLabel = new QLabel();
-    ssidBLabel->setText("SSID 2");
-    ssidBLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodeSSID5()!="")
+    {
+        QLabel *ssid5Label = new QLabel();
+        ssid5Label->setText("SSID 5GHz");
+        ssid5Label->setMinimumWidth(labelWidth);
 
-    this->ssidBLine->setText(item.value("InternetGatewayDevice").toObject().value("LANDevice").toObject().value("1").toObject().value("WLANConfiguration").toObject().value("2").toObject().value("SSID").toObject().value("_value").toString());
+        this->ssid5Line->setText(this->windowCPE->getSSID5(item));
+        QPushButton *ssid5Button = new QPushButton();
+        ssid5Button->setText("Save");
+        connect(ssid5Button, SIGNAL(clicked()),this, SLOT(sendSSID5()));
 
-    QPushButton *ssidBButton = new QPushButton();
-    ssidBButton->setText("Save");
-    connect(ssidBButton, SIGNAL(clicked()),this, SLOT(sendSSIDB()));
+        QWidget* ssid5Area = new QWidget;
+        ssid5Area->setLayout(new QHBoxLayout(ssid5Area));
 
-    QWidget* ssidBArea = new QWidget;
-    ssidBArea->setLayout(new QHBoxLayout(ssidBArea));
+        ssid5Area->layout()->setMargin(0);
+        ssid5Area->layout()->setSpacing(0);
+        ssid5Area->layout()->addWidget(ssid5Label);
+        ssid5Area->layout()->addWidget(this->ssid5Line);
+        ssid5Area->layout()->addWidget(ssid5Button);
 
-    ssidBArea->layout()->setMargin(0);
-    ssidBArea->layout()->setSpacing(0);
-    ssidBArea->layout()->addWidget(ssidBLabel);
-    ssidBArea->layout()->addWidget(this->ssidBLine);
-    ssidBArea->layout()->addWidget(ssidBButton);
+        techAreaV->layout()->addWidget(ssid5Area);
+    }
     /**/
-    QLabel *ssidBPasLabel = new QLabel();
-    ssidBPasLabel->setText("Pass");
-    ssidBPasLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodeSSID5Pass()!="")
+    {
+        QLabel *ssid5PasLabel = new QLabel();
+        ssid5PasLabel->setText("5 GHz Pass");
+        ssid5PasLabel->setMinimumWidth(labelWidth);
 
-    this->ssidBPasLine->setText(item.value("InternetGatewayDevice").toObject().value("LANDevice").toObject().value("1").toObject().value("WLANConfiguration").toObject().value("1").toObject().value("X_TP_PreSharedKey").toObject().value("_value").toString());
-    QPushButton *ssidBPasButton = new QPushButton();
-    ssidBPasButton->setText("Save");
-    connect(ssidBPasButton, SIGNAL(clicked()),this, SLOT(sendSSIDBPas()));
+        this->ssid5PasLine->setText(this->windowCPE->getSSID5Pass(item));
+        QPushButton *ssid5PasButton = new QPushButton();
+        ssid5PasButton->setText("Save");
+        connect(ssid5PasButton, SIGNAL(clicked()),this, SLOT(sendSSID5Pas()));
 
-    QWidget* ssidBPasArea = new QWidget;
-    ssidBPasArea->setLayout(new QHBoxLayout(ssidBPasArea));
+        QWidget* ssid5PasArea = new QWidget;
+        ssid5PasArea->setLayout(new QHBoxLayout(ssid5PasArea));
 
-    ssidBPasArea->layout()->setMargin(0);
-    ssidBPasArea->layout()->setSpacing(0);
+        ssid5PasArea->layout()->setMargin(0);
+        ssid5PasArea->layout()->setSpacing(0);
 
-    ssidBPasArea->layout()->addWidget(ssidBPasLabel);
-    ssidBPasArea->layout()->addWidget(this->ssidBPasLine);
-    ssidBPasArea->layout()->addWidget(ssidBPasButton);
+        ssid5PasArea->layout()->addWidget(ssid5PasLabel);
+        ssid5PasArea->layout()->addWidget(this->ssid5PasLine);
+        ssid5PasArea->layout()->addWidget(ssid5PasButton);
+        techAreaV->layout()->addWidget(ssid5PasArea);
+    }
     /**/
-    QLabel *pppoeLLabel = new QLabel();
-    pppoeLLabel->setText("PPPoE L");
-    pppoeLLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodePPPoELogin()!="")
+    {
+        QLabel *pppoeLoginLabel = new QLabel();
+        pppoeLoginLabel->setText("PPPoE Login");
+        pppoeLoginLabel->setMinimumWidth(labelWidth);
 
-    this->pppoeLLine->setText(item.value("InternetGatewayDevice").toObject().value("WANDevice").toObject().value("1").toObject().value("WANConnectionDevice").toObject().value("1").toObject().value("WANPPPConnection").toObject().value("1").toObject().value("Username").toObject().value("_value").toString());
-    QPushButton *pppoeLButton = new QPushButton();
-    pppoeLButton->setText("Save");
-    connect(pppoeLButton, SIGNAL(clicked()),this, SLOT(sendPPPPoeL()));
+        this->pppoeLoginLine->setText(this->windowCPE->getPPPoELogin(item));
+        QPushButton *pppoeLoginButton = new QPushButton();
+        pppoeLoginButton->setText("Save");
+        connect(pppoeLoginButton, SIGNAL(clicked()),this, SLOT(sendPPPPoELogin()));
 
-    QWidget* pppoeLArea = new QWidget;
-    pppoeLArea->setLayout(new QHBoxLayout(pppoeLArea));
+        QWidget* pppoeLoginArea = new QWidget;
+        pppoeLoginArea->setLayout(new QHBoxLayout(pppoeLoginArea));
 
-    pppoeLArea->layout()->setMargin(0);
-    pppoeLArea->layout()->setSpacing(0);
+        pppoeLoginArea->layout()->setMargin(0);
+        pppoeLoginArea->layout()->setSpacing(0);
 
-    pppoeLArea->layout()->addWidget(pppoeLLabel);
-    pppoeLArea->layout()->addWidget(this->pppoeLLine);
-    pppoeLArea->layout()->addWidget(pppoeLButton);
+        pppoeLoginArea->layout()->addWidget(pppoeLoginLabel);
+        pppoeLoginArea->layout()->addWidget(this->pppoeLoginLine);
+        pppoeLoginArea->layout()->addWidget(pppoeLoginButton);
+
+        techAreaV->layout()->addWidget(pppoeLoginArea);
+    }
     /**/
     QLabel *pppoePLabel = new QLabel();
-    pppoePLabel->setText("PPPoE P");
+    pppoePLabel->setText("PPPoE Pass");
     pppoePLabel->setMinimumWidth(labelWidth);
 
-    this->pppoePLine->setText(item.value("InternetGatewayDevice").toObject().value("WANDevice").toObject().value("1").toObject().value("WANConnectionDevice").toObject().value("1").toObject().value("WANPPPConnection").toObject().value("1").toObject().value("Password").toObject().value("_value").toString());
+    this->pppoePLine->setText(this->windowCPE->getPPPoEPass(item));
     QPushButton *pppoePButton = new QPushButton();
     pppoePButton->setText("Save");
     connect(pppoePButton, SIGNAL(clicked()),this, SLOT(sendPPPPoePas()));
 
-    QWidget* pppoePArea = new QWidget;
-    pppoePArea->setLayout(new QHBoxLayout(pppoePArea));
+    QWidget* pppoeArea = new QWidget;
+    pppoeArea->setLayout(new QHBoxLayout(pppoeArea));
 
-    pppoePArea->layout()->setMargin(0);
-    pppoePArea->layout()->setSpacing(0);
+    pppoeArea->layout()->setMargin(0);
+    pppoeArea->layout()->setSpacing(0);
 
-    pppoePArea->layout()->addWidget(pppoePLabel);
-    pppoePArea->layout()->addWidget(this->pppoePLine);
-    pppoePArea->layout()->addWidget(pppoePButton);
+    pppoeArea->layout()->addWidget(pppoePLabel);
+    pppoeArea->layout()->addWidget(this->pppoePLine);
+    pppoeArea->layout()->addWidget(pppoePButton);
     /**/
-    QWidget* techAreaV = new QWidget;
-    techAreaV->setLayout(new QVBoxLayout(techAreaV));
-    techAreaV->layout()->addWidget(ssidArea);
-    techAreaV->layout()->addWidget(ssidPasArea);
-    techAreaV->layout()->addWidget(ssidBArea);
-    techAreaV->layout()->addWidget(ssidBPasArea);
-    techAreaV->layout()->addWidget(pppoeLArea);
-    techAreaV->layout()->addWidget(pppoePArea);
+
+    techAreaV->layout()->addWidget(pppoeArea);
 
     ui->scrollArea->setWidget(techAreaV);
 }
