@@ -49,7 +49,11 @@ bool Cpewindow::setPointer(QString productclass){
         this->windowCPE= new CpeIGD();
         return true;
     }
-
+    else if(productclass=="AC8")
+    {
+        this->windowCPE= new CpeIGD();
+        return true;
+    }
     return false;
 }
 
