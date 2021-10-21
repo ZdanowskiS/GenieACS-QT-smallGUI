@@ -30,6 +30,11 @@ QString CpeAC8::getPPPoEPass(QJsonObject item)
     return item.value("InternetGatewayDevice").toObject().value("WANDevice").toObject().value("1").toObject().value("WANConnectionDevice").toObject().value("1").toObject().value("WANPPPConnection").toObject().value("1").toObject().value("Password").toObject().value("_value").toString();
 }
 
+QString CpeAC8::getPPPoEEnable(QJsonObject item)
+{
+    return item.value("InternetGatewayDevice").toObject().value("WANDevice").toObject().value("1").toObject().value("WANConnectionDevice").toObject().value("1").toObject().value("WANPPPConnection").toObject().value("1").toObject().value("Enable").toObject().value("_value").toString();
+}
+
 QString CpeAC8::getNodeSSID24()
 {
     return this->nodeSSID24;
@@ -58,4 +63,9 @@ QString CpeAC8::getNodePPPoELogin()
 QString CpeAC8::getNodePPPoEPass()
 {
     return this->nodePPPoEPass;
+}
+
+QString CpeAC8::getNodePPPoEEnable()
+{
+    return this->nodePPPoEEnable;
 }

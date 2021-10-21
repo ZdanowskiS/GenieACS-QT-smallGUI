@@ -12,8 +12,7 @@
 #include <QString>
 #include <QLineEdit>
 #include <QPushButton>
-
-#include <QDebug>
+#include <QRadioButton>
 
 #include "rest.h"
 #include "cpeigd.h"
@@ -56,6 +55,8 @@ private slots:
 
     void sendPPPPoELogin();
     void sendPPPPoePas();
+
+    void sendPPPoEYesEnable(bool checked);
 
 private:
     Ui::Cpewindow *ui;

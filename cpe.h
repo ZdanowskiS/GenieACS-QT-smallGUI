@@ -1,8 +1,6 @@
 #ifndef CPE_H
 #define CPE_H
 
-#endif // CPE_H
-
 #include <QString>
 #include <QJsonObject>
 
@@ -18,6 +16,7 @@ public:
 
     QString nodePPPoELogin;
     QString nodePPPoEPass;
+    QString nodePPPoEEnable;
 
     virtual QString getSSID24(QJsonObject item) =0;
     virtual QString getSSID24Pass(QJsonObject item) =0;
@@ -27,6 +26,7 @@ public:
 
     virtual QString getPPPoELogin(QJsonObject item) =0;
     virtual QString getPPPoEPass(QJsonObject item) =0;
+    virtual QString getPPPoEEnable(QJsonObject item) =0;
 
     virtual QString getNodeSSID24()=0;
     virtual QString getNodeSSID24Pass()=0;
@@ -36,6 +36,6 @@ public:
 
     virtual QString getNodePPPoELogin()=0;
     virtual QString getNodePPPoEPass()=0;
-    //virtual QString test(QString what) =0;
-
+    virtual QString getNodePPPoEEnable()=0;
 };
+#endif // CPE_H

@@ -107,6 +107,17 @@ void Cpewindow::sendPPPPoePas()
     this->mrest->PostData(task, data);
 }
 
+void Cpewindow::sendPPPoEYesEnable(bool checked)
+{
+    std::string setting="false";
+    if(checked){
+        setting="true";
+    }
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
+    std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEEnable().toStdString()+"\", \""+setting+"\", \"xsd:string\"]]}";
+
+    this->mrest->PostData(task, data);
+}
 void Cpewindow::displayCPE(QJsonObject item)
 {
     const short int labelWidth = 85;
@@ -235,27 +246,62 @@ void Cpewindow::displayCPE(QJsonObject item)
         techAreaV->layout()->addWidget(pppoeLoginArea);
     }
     /**/
-    QLabel *pppoePLabel = new QLabel();
-    pppoePLabel->setText("PPPoE Pass");
-    pppoePLabel->setMinimumWidth(labelWidth);
+    if(this->windowCPE->getNodePPPoELogin()!="")
+    {
+        QLabel *pppoePLabel = new QLabel();
+        pppoePLabel->setText("PPPoE Pass");
+        pppoePLabel->setMinimumWidth(labelWidth);
 
-    this->pppoePLine->setText(this->windowCPE->getPPPoEPass(item));
-    QPushButton *pppoePButton = new QPushButton();
-    pppoePButton->setText("Save");
-    connect(pppoePButton, SIGNAL(clicked()),this, SLOT(sendPPPPoePas()));
+        this->pppoePLine->setText(this->windowCPE->getPPPoEPass(item));
+        QPushButton *pppoePButton = new QPushButton();
+        pppoePButton->setText("Save");
+        connect(pppoePButton, SIGNAL(clicked()),this, SLOT(sendPPPPoePas()));
 
-    QWidget* pppoeArea = new QWidget;
-    pppoeArea->setLayout(new QHBoxLayout(pppoeArea));
+        QWidget* pppoeArea = new QWidget;
+        pppoeArea->setLayout(new QHBoxLayout(pppoeArea));
 
-    pppoeArea->layout()->setMargin(0);
-    pppoeArea->layout()->setSpacing(0);
+        pppoeArea->layout()->setMargin(0);
+        pppoeArea->layout()->setSpacing(0);
 
-    pppoeArea->layout()->addWidget(pppoePLabel);
-    pppoeArea->layout()->addWidget(this->pppoePLine);
-    pppoeArea->layout()->addWidget(pppoePButton);
+        pppoeArea->layout()->addWidget(pppoePLabel);
+        pppoeArea->layout()->addWidget(this->pppoePLine);
+        pppoeArea->layout()->addWidget(pppoePButton);
+
+        techAreaV->layout()->addWidget(pppoeArea);
+    }
+    if(this->windowCPE->getNodePPPoEEnable()!="")
+    {
+        QLabel *pppoeEnableLabel = new QLabel();
+        pppoeEnableLabel->setText("PPPoE Enable");
+        pppoeEnableLabel->setMinimumWidth(labelWidth);
+        QRadioButton *pppoeYesEnable = new QRadioButton();
+        pppoeYesEnable->setText("Yes");
+        connect(pppoeYesEnable, SIGNAL(toggled(bool)),this, SLOT(sendPPPoEYesEnable(bool)));
+        QRadioButton *pppoeNoEnable = new QRadioButton();
+        pppoeNoEnable->setText("No");
+
+        if(this->windowCPE->getNodePPPoEEnable()=='true')
+        {
+            pppoeYesEnable->setChecked(true);
+            pppoeNoEnable->setChecked(false);
+        }
+        else{
+            pppoeYesEnable->setChecked(false);
+            pppoeNoEnable->setChecked(true);
+        }
+        QWidget* pppoeEnableArea = new QWidget;
+        pppoeEnableArea->setLayout(new QHBoxLayout(pppoeEnableArea));
+
+        pppoeEnableArea->layout()->setMargin(0);
+        pppoeEnableArea->layout()->setSpacing(0);
+
+        pppoeEnableArea->layout()->addWidget(pppoeEnableLabel);
+        pppoeEnableArea->layout()->addWidget(pppoeYesEnable);
+        pppoeEnableArea->layout()->addWidget(pppoeNoEnable);
+
+        techAreaV->layout()->addWidget(pppoeEnableArea);
+    }
     /**/
-
-    techAreaV->layout()->addWidget(pppoeArea);
 
     ui->scrollArea->setWidget(techAreaV);
 }

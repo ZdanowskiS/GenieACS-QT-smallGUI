@@ -8,7 +8,6 @@
 class CpeIGD : public Cpe
 {
 public:
-   // CpeIGD();
 
     QString nodeSSID24="InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID";
     QString nodeSSID24Pass="InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.X_TP_PreSharedKey";
@@ -18,6 +17,7 @@ public:
 
     QString nodePPPoELogin="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Username";
     QString nodePPPoEPass="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Password";
+    QString nodePPPoEEnable="";
 
     QString getSSID24(QJsonObject item);
     QString getSSID24Pass(QJsonObject item);
@@ -27,6 +27,7 @@ public:
 
     QString getPPPoELogin(QJsonObject item);
     QString getPPPoEPass(QJsonObject item);
+    QString getPPPoEEnable(QJsonObject item);
 
     QString getNodeSSID24();
     QString getNodeSSID24Pass();
@@ -36,7 +37,7 @@ public:
 
     QString getNodePPPoELogin();
     QString getNodePPPoEPass();
-
+    QString getNodePPPoEEnable();
 };
 
 #endif // CPEIGD_H

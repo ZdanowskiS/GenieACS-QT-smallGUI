@@ -8,7 +8,7 @@
 class CpeAC8 : public Cpe
 {
 public:
-    //cpeAC8();
+
     QString nodeSSID24="InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID";
     QString nodeSSID24Pass="InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.PreSharedKey";
 
@@ -17,6 +17,7 @@ public:
 
     QString nodePPPoELogin="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Username";
     QString nodePPPoEPass="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Password";
+    QString nodePPPoEEnable="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Enable";
 
     QString getSSID24(QJsonObject item);
     QString getSSID24Pass(QJsonObject item);
@@ -26,6 +27,7 @@ public:
 
     QString getPPPoELogin(QJsonObject item);
     QString getPPPoEPass(QJsonObject item);
+    QString getPPPoEEnable(QJsonObject item);
 
     QString getNodeSSID24();
     QString getNodeSSID24Pass();
@@ -35,6 +37,7 @@ public:
 
     QString getNodePPPoELogin();
     QString getNodePPPoEPass();
+    QString getNodePPPoEEnable();
 };
 
 #endif // CPEAC8_H
