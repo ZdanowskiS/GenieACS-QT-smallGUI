@@ -30,14 +30,16 @@ SOURCES += \
         mainwindow.cpp \
     rest.cpp \
     cpewindow.cpp \
-    cpeigd.cpp
+    cpeigd.cpp \
+    cpeac8.cpp
 
 HEADERS += \
         mainwindow.h \
     rest.h \
     cpewindow.h \
     cpe.h \
-    cpeigd.h
+    cpeigd.h \
+    cpeac8.h
 
 FORMS += \
         mainwindow.ui \
