@@ -2,6 +2,7 @@
 #include "ui_cpewindow.h"
 
 #include "cpeigd.h"
+#include "cpeac8.h"
 
 Cpewindow::Cpewindow(rest *acs_rest, QWidget *parent) :
     QWidget(parent),
@@ -51,7 +52,7 @@ bool Cpewindow::setPointer(QString productclass){
     }
     else if(productclass=="AC8")
     {
-        this->windowCPE= new CpeIGD();
+        this->windowCPE= new CpeAC8();
         return true;
     }
     return false;
