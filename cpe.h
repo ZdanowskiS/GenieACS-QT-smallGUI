@@ -18,6 +18,9 @@ public:
     QString nodePPPoEPass;
     QString nodePPPoEEnable;
 
+    QString nodeReboot;
+    QString nodeFactoryReset;
+
     virtual QString getSSID24(QJsonObject item) =0;
     virtual QString getSSID24Pass(QJsonObject item) =0;
 
@@ -28,6 +31,9 @@ public:
     virtual QString getPPPoEPass(QJsonObject item) =0;
     virtual QString getPPPoEEnable(QJsonObject item) =0;
 
+    virtual QString getReboot(QJsonObject item) =0;
+    virtual QString getFactoryReset(QJsonObject item) =0;
+
     virtual QString getNodeSSID24()=0;
     virtual QString getNodeSSID24Pass()=0;
 
@@ -37,5 +43,8 @@ public:
     virtual QString getNodePPPoELogin()=0;
     virtual QString getNodePPPoEPass()=0;
     virtual QString getNodePPPoEEnable()=0;
+
+    virtual QString getNodeReboot()=0;
+    virtual QString getNodeFactoryReset()=0;
 };
 #endif // CPE_H

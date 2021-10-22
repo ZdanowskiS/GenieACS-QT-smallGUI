@@ -35,6 +35,20 @@ QString CpeAC8::getPPPoEEnable(QJsonObject item)
     return item.value("InternetGatewayDevice").toObject().value("WANDevice").toObject().value("1").toObject().value("WANConnectionDevice").toObject().value("1").toObject().value("WANPPPConnection").toObject().value("1").toObject().value("Enable").toObject().value("_value").toString();
 }
 
+QString CpeAC8::getReboot(QJsonObject item)
+{
+    QDateTime d = QDateTime::fromString(item.value("Reboot").toObject().value("_value").toString(), Qt::ISODate).toLocalTime();
+    d.setTimeSpec(Qt::LocalTime);
+    return d.toString("yyyy-MM-dd hh:mm:ss");
+}
+
+QString CpeAC8::getFactoryReset(QJsonObject item)
+{
+    QDateTime d = QDateTime::fromString(item.value("FactoryReset").toObject().value("_value").toString(), Qt::ISODate).toLocalTime();
+    d.setTimeSpec(Qt::LocalTime);
+    return d.toString("yyyy-MM-dd hh:mm:ss");
+}
+
 QString CpeAC8::getNodeSSID24()
 {
     return this->nodeSSID24;
@@ -68,4 +82,14 @@ QString CpeAC8::getNodePPPoEPass()
 QString CpeAC8::getNodePPPoEEnable()
 {
     return this->nodePPPoEEnable;
+}
+
+QString CpeAC8::getNodeReboot()
+{
+    return this->nodeReboot;
+}
+
+QString CpeAC8::getNodeFactoryReset()
+{
+    return this->nodeFactoryReset;
 }

@@ -57,6 +57,8 @@ private slots:
     void sendPPPPoePas();
 
     void sendPPPoEYesEnable(bool checked);
+    void sendReboot();
+    void sendFactoryReset();
 
 private:
     Ui::Cpewindow *ui;

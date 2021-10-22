@@ -58,9 +58,24 @@ bool Cpewindow::setPointer(QString productclass){
     return false;
 }
 
+void Cpewindow::sendReboot()
+{
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
+    std::string data = "{\"name\":\"Reboot\"}";
+
+    this->mrest->PostData(task, data);
+}
+
+void Cpewindow::sendFactoryReset()
+{
+    QString task="devices/"+this->deviceID+"/tasks?connection_request";
+    std::string data = "{\"name\":\"factoryReset\"}";
+
+    this->mrest->PostData(task, data);
+}
+
 void Cpewindow::sendSSID24()
 {
-
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24().toStdString()+"\", \""+this->ssid24Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
@@ -124,6 +139,62 @@ void Cpewindow::displayCPE(QJsonObject item)
     QWidget* techAreaV = new QWidget;
     techAreaV->setLayout(new QVBoxLayout(techAreaV));
     /**/
+    if(this->windowCPE->getNodeReboot()!="")
+    {
+        QLabel *rebootLabel = new QLabel();
+        rebootLabel->setText("Reboot");
+        rebootLabel->setMinimumWidth(labelWidth);
+
+        QLineEdit *rebootLine = new QLineEdit();
+        rebootLine->setText(this->windowCPE->getReboot(item));
+        rebootLine->setMinimumWidth(100);
+        rebootLine->setDisabled(true);
+
+        QPushButton *rebootButton = new QPushButton();
+        rebootButton->setText("Reboot");
+
+        connect(rebootButton, SIGNAL(clicked()),this, SLOT(sendReboot()));
+
+        QWidget* rebootArea = new QWidget;
+        rebootArea->setLayout(new QHBoxLayout(rebootArea));
+
+        rebootArea->layout()->setMargin(0);
+        rebootArea->layout()->setSpacing(0);
+
+        rebootArea->layout()->addWidget(rebootLabel);
+        rebootArea->layout()->addWidget(rebootLine);
+        rebootArea->layout()->addWidget(rebootButton);
+
+        techAreaV->layout()->addWidget(rebootArea);
+    }
+    if(this->windowCPE->getNodeFactoryReset()!="")
+    {
+        QLabel *factoryResetLabel = new QLabel();
+        factoryResetLabel->setText("Reset");
+        factoryResetLabel->setMinimumWidth(labelWidth);
+
+        QLineEdit *factoryResetLine = new QLineEdit();
+        factoryResetLine->setText(this->windowCPE->getFactoryReset(item));
+        factoryResetLine->setMinimumWidth(100);
+        factoryResetLine->setDisabled(true);
+
+        QPushButton *factoryResetButton = new QPushButton();
+        factoryResetButton->setText("Reset");
+
+        connect(factoryResetButton, SIGNAL(clicked()),this, SLOT(sendFactoryReset()));
+
+        QWidget* factoryResetArea = new QWidget;
+        factoryResetArea->setLayout(new QHBoxLayout(factoryResetArea));
+
+        factoryResetArea->layout()->setMargin(0);
+        factoryResetArea->layout()->setSpacing(0);
+
+        factoryResetArea->layout()->addWidget(factoryResetLabel);
+        factoryResetArea->layout()->addWidget(factoryResetLine);
+        factoryResetArea->layout()->addWidget(factoryResetButton);
+
+        techAreaV->layout()->addWidget(factoryResetArea);
+    }
     if(this->windowCPE->getNodeSSID24()!="")
     {
         QLabel *ssid24Label = new QLabel();
@@ -132,7 +203,7 @@ void Cpewindow::displayCPE(QJsonObject item)
 
         this->ssid24Line->setText(this->windowCPE->getSSID24(item));
 
-        ssid24Line->setMinimumWidth(100);
+        //ssid24Line->setMinimumWidth(100);
 
         QPushButton *ssid24Button = new QPushButton();
         ssid24Button->setText("Save");

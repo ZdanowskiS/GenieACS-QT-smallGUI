@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QJsonObject>
+#include <QDateTime>
 #include "cpe.h"
 
 class CpeIGD : public Cpe
@@ -19,6 +20,9 @@ public:
     QString nodePPPoEPass="InternetGatewayDevice.WANDevice.1.WANConnectionDevice.1.WANPPPConnection.1.Password";
     QString nodePPPoEEnable="";
 
+    QString nodeReboot="Reboot";
+    QString nodeFactoryReset="FactoryReset";
+
     QString getSSID24(QJsonObject item);
     QString getSSID24Pass(QJsonObject item);
 
@@ -29,6 +33,9 @@ public:
     QString getPPPoEPass(QJsonObject item);
     QString getPPPoEEnable(QJsonObject item);
 
+    QString getReboot(QJsonObject item);
+    QString getFactoryReset(QJsonObject item);
+
     QString getNodeSSID24();
     QString getNodeSSID24Pass();
 
@@ -38,6 +45,9 @@ public:
     QString getNodePPPoELogin();
     QString getNodePPPoEPass();
     QString getNodePPPoEEnable();
+
+    QString getNodeReboot();
+    QString getNodeFactoryReset();
 };
 
 #endif // CPEIGD_H
