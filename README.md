@@ -8,10 +8,13 @@ GUI supports:
 
 Other devices will be displayed without ability to edit any settings.
 Knowing device serial number we can quickly find it and edit:
-- SSID
+- Reboot
+- Reset
+- SSID 2.4GHz and 5GHz
 - SSID password
 - PPPoE login
 - PPPoE password
+- PPPoE Enable/disable
 
 This is more appropriate for people that shouldn't have full access.
 # Adding settings and models
