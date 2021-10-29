@@ -23,9 +23,11 @@ public:
     rest();
 
     QString url;
+    QString token;
     QString selected;
 
     void SetUrl(QString url);
+    void SetToken(QString token);
 
     QString GetData(QString task);
     QString PostData(QString task, std::string data);

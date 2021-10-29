@@ -16,6 +16,11 @@ void rest::SetUrl(QString url)
     this->url=url;
 }
 
+void rest::SetToken(QString token)
+{
+    this->token=token;
+}
+
 QString rest::GetData(QString task)
 {
     CURL* easyhandle = curl_easy_init();
@@ -39,6 +44,13 @@ QString rest::PostData(QString task, std::string data)
     std::string readBuffer;
     QString url=this->url+task;
 
+    if(this->token!="")
+    {
+        struct curl_slist *slist=NULL;
+        QString auth="Authorization: "+this->token;
+        slist = curl_slist_append(slist, auth.toStdString().c_str());
+        curl_easy_setopt(easyhandle, CURLOPT_HTTPHEADER, slist);
+    }
     curl_easy_setopt(easyhandle, CURLOPT_URL, url.toStdString().c_str());
     curl_easy_setopt(easyhandle, CURLOPT_POST, 1);
     curl_easy_setopt(easyhandle, CURLOPT_POSTFIELDS,data.c_str());

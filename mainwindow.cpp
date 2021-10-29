@@ -11,6 +11,12 @@ MainWindow::MainWindow(QWidget *parent) :
    if(settings.value("settings/url", false).toBool()){
        ui->urlEdit->setText(settings.value("settings/url").toString());
    }
+   if(settings.value("settings/guiurl", false).toBool()){
+       ui->guiurlEdit->setText(settings.value("settings/guiurl").toString());
+   }
+   if(settings.value("settings/guitoken", false).toBool()){
+       ui->guitokenEdit->setText(settings.value("settings/guitoken").toString());
+   }
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +30,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 
     this->acs_rest->selected=ui->tableView->model()->data(ui->tableView->model()->index(index.row(),0)).toString();
 
-    Cpewindow *cpewindow = new Cpewindow(this->acs_rest);
+    Cpewindow *cpewindow = new Cpewindow(this->acs_rest,this->lightCSV_rest);
 
     cpewindow->show();
 }
@@ -35,12 +41,21 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     if(index==1){
         QString url=ui->urlEdit->text();
         settings.setValue("settings/url", url);
+        QString guiurl=ui->guiurlEdit->text();
+        settings.setValue("settings/guiurl", guiurl);
+
+        QString guitoken=ui->guitokenEdit->text();
+        settings.setValue("settings/guitoken", guitoken);
         settings.sync();
+
         acs_rest->SetUrl(url);
+        lightCSV_rest->SetUrl(guiurl);
+        lightCSV_rest->SetToken(guitoken);
 
         acs_rest->cpeVector=acs_rest->getCPEList();
 
         this->fill_tableView(acs_rest->cpeVector);
+
     }
 }
 

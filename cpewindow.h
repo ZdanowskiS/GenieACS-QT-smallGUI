@@ -26,12 +26,14 @@ class Cpewindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit Cpewindow(rest *acs_rest, QWidget *parent = nullptr);
+    explicit Cpewindow(rest *acs_rest, rest *lightCSV_rest, QWidget *parent = nullptr);
     ~Cpewindow();
 
     void displayCPE(QJsonObject item);
     QString id;
     rest *mrest;
+
+    rest *lightCSV;
     Cpe *windowCPE;
 
     QString deviceID;

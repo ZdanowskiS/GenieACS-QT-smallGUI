@@ -24,6 +24,7 @@ public:
     ~MainWindow();
 
     rest *acs_rest = new rest();
+    rest *lightCSV_rest = new rest();
 
     void fill_tableView(QVector<cpeListItem> fillVector);
 private slots:

@@ -4,12 +4,14 @@
 #include "cpeigd.h"
 #include "cpeac8.h"
 
-Cpewindow::Cpewindow(rest *acs_rest, QWidget *parent) :
+Cpewindow::Cpewindow(rest *acs_rest, rest *lightCSV_rest, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Cpewindow)
 {
     ui->setupUi(this);
     this->mrest=acs_rest;
+    this->lightCSV=lightCSV_rest;
+
     this->deviceID=this->mrest->selected;
 
     QString task= "devices/"+this->deviceID+"/tasks?timeout=3000&connection_request";
@@ -80,6 +82,12 @@ void Cpewindow::sendSSID24()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24().toStdString()+"\", \""+this->ssid24Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendSSID24Pass()
@@ -88,6 +96,12 @@ void Cpewindow::sendSSID24Pass()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24Pass().toStdString()+"\", \""+this->ssid24PassLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendSSID5()
@@ -96,6 +110,12 @@ void Cpewindow::sendSSID5()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5().toStdString()+"\", \""+this->ssid5Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendSSID5Pas()
@@ -104,6 +124,12 @@ void Cpewindow::sendSSID5Pas()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5Pass().toStdString()+"\", \""+this->ssid5PasLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendPPPPoELogin()
@@ -112,6 +138,12 @@ void Cpewindow::sendPPPPoELogin()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoELogin().toStdString()+"\", \""+this->pppoeLoginLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendPPPPoePas()
@@ -120,6 +152,12 @@ void Cpewindow::sendPPPPoePas()
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEPass().toStdString()+"\", \""+this->pppoePLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 
 void Cpewindow::sendPPPoEYesEnable(bool checked)
@@ -132,6 +170,12 @@ void Cpewindow::sendPPPoEYesEnable(bool checked)
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEEnable().toStdString()+"\", \""+setting+"\", \"xsd:string\"]]}";
 
     this->mrest->PostData(task, data);
+
+    if(this->lightCSV->token!="" && this->lightCSV->url!="")
+    {
+        task="gui/setconfiguration/"+this->deviceID;
+        this->lightCSV->PostData(task, data);
+    }
 }
 void Cpewindow::displayCPE(QJsonObject item)
 {
