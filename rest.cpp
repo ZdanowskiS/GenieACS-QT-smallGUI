@@ -27,12 +27,21 @@ QString rest::GetData(QString task)
     std::string readBuffer;
     QString url=this->url+task;
 
+    struct curl_slist *slist=NULL;
+    if(this->token!="")
+    {
+        QString auth="Authorization: "+this->token;
+        slist = curl_slist_append(slist, auth.toStdString().c_str());
+        curl_easy_setopt(easyhandle, CURLOPT_HTTPHEADER, slist);
+    }
     curl_easy_setopt(easyhandle, CURLOPT_URL, url.toStdString().c_str());
     curl_easy_setopt(easyhandle, CURLOPT_SSL_VERIFYPEER, false);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
+    curl_slist_free_all(slist);
+
     QString result = QString::fromUtf8(readBuffer.c_str());
 
     return result;
@@ -44,9 +53,9 @@ QString rest::PostData(QString task, std::string data)
     std::string readBuffer;
     QString url=this->url+task;
 
+    struct curl_slist *slist=NULL;
     if(this->token!="")
     {
-        struct curl_slist *slist=NULL;
         QString auth="Authorization: "+this->token;
         slist = curl_slist_append(slist, auth.toStdString().c_str());
         curl_easy_setopt(easyhandle, CURLOPT_HTTPHEADER, slist);
@@ -58,9 +67,9 @@ QString rest::PostData(QString task, std::string data)
     curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, WriteCallback);
     curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, &readBuffer);
 
-    CURLcode res;
-    res = curl_easy_perform(easyhandle);
+    curl_easy_perform(easyhandle);
     curl_easy_cleanup(easyhandle);
+    curl_slist_free_all(slist);
     QString result = QString::fromUtf8(readBuffer.c_str());
 
     return result;

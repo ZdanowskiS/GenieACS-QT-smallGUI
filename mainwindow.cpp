@@ -26,10 +26,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
-    QTableView *table = ui->tableView;
-
     this->acs_rest->selected=ui->tableView->model()->data(ui->tableView->model()->index(index.row(),0)).toString();
-
     Cpewindow *cpewindow = new Cpewindow(this->acs_rest,this->lightCSV_rest);
 
     cpewindow->show();
@@ -55,7 +52,6 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         acs_rest->cpeVector=acs_rest->getCPEList();
 
         this->fill_tableView(acs_rest->cpeVector);
-
     }
 }
 

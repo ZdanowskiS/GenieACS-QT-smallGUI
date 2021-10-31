@@ -398,7 +398,7 @@ void Cpewindow::displayCPE(QJsonObject item)
         QRadioButton *pppoeNoEnable = new QRadioButton();
         pppoeNoEnable->setText("No");
 
-        if(this->windowCPE->getNodePPPoEEnable()=='true')
+        if(this->windowCPE->getNodePPPoEEnable()=="true")
         {
             pppoeYesEnable->setChecked(true);
             pppoeNoEnable->setChecked(false);

@@ -1,9 +1,6 @@
 #ifndef CPEIGD_H
 #define CPEIGD_H
 
-#include <QString>
-#include <QJsonObject>
-#include <QDateTime>
 #include "cpe.h"
 
 class CpeIGD : public Cpe

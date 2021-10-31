@@ -1,9 +1,6 @@
 #ifndef CPEAC8_H
 #define CPEAC8_H
 
-#include <QString>
-#include <QJsonObject>
-#include <QDateTime>
 #include "cpe.h"
 
 class CpeAC8 : public Cpe
