@@ -13,9 +13,11 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QtConcurrent/QtConcurrent>
 
 #include "rest.h"
 #include "cpeigd.h"
+#include "cpeac8.h"
 
 namespace Ui {
 class Cpewindow;
@@ -30,6 +32,7 @@ public:
     ~Cpewindow();
 
     void displayCPE(QJsonObject item);
+
     QString id;
     rest *mrest;
 

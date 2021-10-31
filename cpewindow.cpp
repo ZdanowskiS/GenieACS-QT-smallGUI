@@ -1,9 +1,6 @@
 #include "cpewindow.h"
 #include "ui_cpewindow.h"
 
-#include "cpeigd.h"
-#include "cpeac8.h"
-
 Cpewindow::Cpewindow(rest *acs_rest, rest *lightCSV_rest, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Cpewindow)
@@ -44,6 +41,8 @@ Cpewindow::Cpewindow(rest *acs_rest, rest *lightCSV_rest, QWidget *parent) :
 Cpewindow::~Cpewindow()
 {
     delete ui;
+    delete mrest;
+    delete lightCSV;
 }
 
 bool Cpewindow::setPointer(QString productclass){
@@ -60,12 +59,17 @@ bool Cpewindow::setPointer(QString productclass){
     return false;
 }
 
+extern void sendPost(rest &async_rest, QString task, std::string data)
+{
+     async_rest.PostData(task, data);
+}
+
 void Cpewindow::sendReboot()
 {
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
-    std::string data = "{\"name\":\"Reboot\"}";
+    std::string data = "{\"name\":\"reboot\"}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 }
 
 void Cpewindow::sendFactoryReset()
@@ -73,7 +77,7 @@ void Cpewindow::sendFactoryReset()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"factoryReset\"}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 }
 
 void Cpewindow::sendSSID24()
@@ -81,12 +85,12 @@ void Cpewindow::sendSSID24()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24().toStdString()+"\", \""+this->ssid24Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -95,12 +99,12 @@ void Cpewindow::sendSSID24Pass()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID24Pass().toStdString()+"\", \""+this->ssid24PassLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -109,12 +113,12 @@ void Cpewindow::sendSSID5()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5().toStdString()+"\", \""+this->ssid5Line->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -123,12 +127,12 @@ void Cpewindow::sendSSID5Pas()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodeSSID5Pass().toStdString()+"\", \""+this->ssid5PasLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -137,12 +141,12 @@ void Cpewindow::sendPPPPoELogin()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoELogin().toStdString()+"\", \""+this->pppoeLoginLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -151,12 +155,12 @@ void Cpewindow::sendPPPPoePas()
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEPass().toStdString()+"\", \""+this->pppoePLine->text().toStdString()+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 
@@ -169,12 +173,12 @@ void Cpewindow::sendPPPoEYesEnable(bool checked)
     QString task="devices/"+this->deviceID+"/tasks?connection_request";
     std::string data = "{\"name\":\"setParameterValues\", \"parameterValues\": [[\""+this->windowCPE->getNodePPPoEEnable().toStdString()+"\", \""+setting+"\", \"xsd:string\"]]}";
 
-    this->mrest->PostData(task, data);
+    QtConcurrent::run(sendPost, *this->mrest,task, data);
 
     if(this->lightCSV->token!="" && this->lightCSV->url!="")
     {
         task="gui/setconfiguration/"+this->deviceID;
-        this->lightCSV->PostData(task, data);
+        QtConcurrent::run(sendPost, *this->lightCSV,task, data);
     }
 }
 void Cpewindow::displayCPE(QJsonObject item)
@@ -191,7 +195,7 @@ void Cpewindow::displayCPE(QJsonObject item)
 
         QLineEdit *rebootLine = new QLineEdit();
         rebootLine->setText(this->windowCPE->getReboot(item));
-        rebootLine->setMinimumWidth(100);
+        rebootLine->setMinimumWidth(95);
         rebootLine->setDisabled(true);
 
         QPushButton *rebootButton = new QPushButton();
@@ -247,7 +251,6 @@ void Cpewindow::displayCPE(QJsonObject item)
 
         this->ssid24Line->setText(this->windowCPE->getSSID24(item));
 
-        //ssid24Line->setMinimumWidth(100);
 
         QPushButton *ssid24Button = new QPushButton();
         ssid24Button->setText("Save");
